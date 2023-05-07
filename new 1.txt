@@ -1,0 +1,119 @@
+Differences between client-server and peer-to-peer networks:
+In a client-server network, there is a centralized server that provides resources or services to clients (devices) that request them. Clients depend on the server to perform tasks and access resources.
+
+Diagram:
+
+
+Clients      Server
+  A          +-----+
+  |          |     |
+  B----->----|     |
+  |          |     |
+  C          +-----+
+Example: A web server hosting a website and providing web pages to clients (web browsers).
+
+In a peer-to-peer (P2P) network, there is no centralized server. Instead, each node (peer) in the network can act as both a client and a server, sharing resources and services with each other.
+
+Diagram:
+
+css
+Copy code
+Peer A----Peer B
+   |        |
+Peer C----Peer D
+Example: BitTorrent, a file-sharing protocol where files are distributed among peers without a central server.
+
+Differences between non-persistent and persistent HTTP connections:
+In a non-persistent HTTP connection, each request-response pair between the client and server requires a separate TCP connection. The connection is closed after each exchange, causing higher latency and resource usage.
+
+In a persistent HTTP connection (HTTP/1.1 and later), multiple request-response pairs can be sent over a single TCP connection, reducing the overhead of establishing and closing connections for each exchange.
+
+Difference between Stop and Wait protocol and pipelined protocol:
+Stop and Wait protocol: In this protocol, the sender sends a single data packet and waits for an acknowledgment before sending the next packet. This results in a lower throughput, as the sender is idle during the time it takes for the acknowledgment to return.
+
+Pipelined protocol: In this protocol, the sender can send multiple data packets before waiting for acknowledgments, increasing throughput by better utilizing the available bandwidth.
+
+A reliable transfer protocol being stop-and-wait means that it sends a single data packet and waits for an acknowledgment before sending the next packet. It ensures reliability by retransmitting lost or corrupted packets.
+
+To avoid ambiguity in a pipelined reliable transfer protocol with a window size of w, 2 * w sequence numbers are needed. This ensures that there is no confusion between the transmitted packets and their acknowledgments.
+
+MSS stands for Maximum Segment Size, which is the maximum amount of data that can be carried in a single TCP segment, excluding the TCP header.
+
+The receiver's advertised window is a value communicated by the receiver to the sender, specifying the amount of data that the receiver is willing to accept. This helps with flow control in TCP.
+
+In the TCP state "ESTABLISHED," all data is transferred between the client and server.
+
+a. Client-server distribution time calculation:
+
+File size: F = 25 Gbits = 25 * 1000 Mbits
+Server upload rate: 𝑢! = 30 Mbps
+
+Minimum distribution time: F / 𝑢! = (25 * 1000 Mbits) / 30 Mbps = 833.33 seconds
+
+b. Peer-to-peer distribution time calculation:
+
+Total download rate of all clients: N * 𝑑" = 100 * 3 Mbps = 300 Mbps
+Total upload rate of all clients: N * 𝑢 = 100 * 0.4 Mbps = 40 Mbps
+Total capacity: 𝑢! + N * 𝑢 = 30 Mbps + 40 Mbps = 70 Mbps
+
+Minimum distribution time: F / min(Total capacity, Total download rate) = (25 * 1000 Mbits) / 70 Mbps = 357.14 seconds
+
+24,26
+
+
+
+UDP segment header with given information:
+
+Source port: 3306
+Destination port: 80
+Data: 9234, 8345
+
+Length = Header length (8 bytes) + Data length (4 bytes) = 12 bytes
+
+Now, let's calculate the checksum. First, we need to convert the data and header fields into 16-bit binary format:
+
+Source port (3306): 110011101010
+Destination port (80): 000101000000
+Length (12): 000000110000
+Data1 (9234): 100100000010
+Data2 (8345): 100000101001
+
+Add these values together, ignoring the carry:
+
+110011101010
+000101000000
+000000110000
+100100000010
+100000101001
+110101101011 (sum)
+
+Now, take the one's complement of the sum:
+
+001010010100 (one's complement)
+
+The checksum is: 001010010100
+
+a. In the second segment, the sequence number would be the previous sequence number plus the number of bytes in the first segment. Thus:
+Sequence number: 127 + 80 = 207
+Source port number: 302
+Destination port number: 80
+
+b. If the first segment arrives before the second segment, the acknowledgment will have the following values:
+
+ACK number: Sequence number of the first segment + number of bytes in the first segment = 127 + 80 = 207
+Source port number: 80 (reversed)
+Destination port number: 302 (reversed)
+
+c. If the second segment arrives before the first segment, the acknowledgment of the first arriving segment (second segment) would have:
+
+ACK number: 127 (since the expected byte was not received yet)
+
+WAIT FOR CALL 0: Send packet 0, transition to WAIT FOR ACK 0.
+WAIT FOR ACK 0: If ACK 0 is received and not garbled, transition to WAIT FOR CALL 1. If NAK is received or garbled ACK, resend packet 0.
+WAIT FOR CALL 1: Send packet 1, transition to WAIT FOR ACK 1.
+WAIT FOR ACK 1: If ACK 1 is received and not garbled, transition to WAIT FOR CALL 0. If NAK is received or garbled ACK, resend packet 1.
+Receiver:
+
+WAIT FOR 0: If packet 0 is received and not corrupted, send ACK 0, and transition to WAIT FOR 1.
+WAIT FOR 1: If packet 1 is received and not corrupted, send ACK 1, and transition to WAIT FOR 0.
+This is a simple description of the states and transitions for a reliable data transfer protocol with garbled ACK/NAK handling. Please create the diagram based on this information.
